@@ -66,20 +66,91 @@ Do NOT include markdown code blocks or explanations."""
         html_content = '\n'.join(lines[1:-1])
     
     # Generate README
-    readme_prompt = f"""Create a professional README.md for this project:
+    readme_prompt = f"""Create an EXCELLENT, professional README.md for a production web application.
 
 TASK: {brief}
-CHECKS: {json.dumps(checks, indent=2)}
+CHECKS (Requirements): {json.dumps(checks, indent=2)}
 
-Include these sections:
-1. Project Title and Description
-2. Features
-3. Setup Instructions
-4. Usage Guide
-5. Code Explanation (brief technical overview)
-6. License (MIT)
+Follow this EXACT structure:
 
-Make it clear, professional, and well-formatted in Markdown."""
+# [App Name]
+
+## Overview
+2-3 sentence overview of what the app does and its purpose.
+
+## Features
+- Feature 1: Brief description
+- Feature 2: Brief description
+- Feature 3: Brief description
+
+## Technical Stack
+- Frontend: HTML5, CSS3, JavaScript
+- Libraries: [List any CDN libraries used]
+- Data: [CSV, JSON, or none]
+
+## Getting Started
+
+### Prerequisites
+- Modern web browser (Chrome, Firefox, Safari, Edge)
+- Internet connection for CDN resources
+
+### Installation
+1. Clone the repository
+2. Open `index.html` in a web browser
+3. No build process or dependencies needed
+
+## Usage
+
+### How to Use
+Step-by-step instructions on how to use the application.
+
+### Examples
+Provide 1-2 concrete examples of using the app.
+
+## Code Explanation
+
+### Architecture
+Explain the overall structure of the application.
+
+### Key Components
+- Component 1: What it does and why
+- Component 2: What it does and why
+
+### Algorithm/Logic
+Explain the main logic and algorithms used.
+
+### Error Handling
+Explain how errors are handled gracefully.
+
+## Browser Compatibility
+- Chrome: ✅
+- Firefox: ✅
+- Safari: ✅
+- Edge: ✅
+
+## Performance Considerations
+- Page load time: < 2s
+- Responsive design: Yes
+- Accessibility: WCAG 2.1 AA
+
+## Future Improvements
+- Potential enhancement 1
+- Potential enhancement 2
+
+## License
+MIT License - See LICENSE file for details.
+
+## Author
+Auto-generated using LLM Code Deployment System.
+
+---
+
+CRITICAL QUALITY REQUIREMENTS:
+- Be specific and detailed (not generic)
+- Use professional technical language
+- Provide actual code references where relevant
+- Explain WHY design decisions were made
+- Make it suitable for code review and hiring evaluation"""
 
     try:
         readme_model = genai.GenerativeModel('gemini-2.0-flash')
