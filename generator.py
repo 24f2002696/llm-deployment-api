@@ -8,17 +8,51 @@ genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
 def generate_app(brief, checks, attachments, task, round_num):
     """Generate app files using Gemini"""
     
-    # Decode attachments
+    # Validate and decode attachments
     decoded_attachments = []
+    
     for att in attachments:
-        name = att['name']
-        data_uri = att['url']
-        # Parse data URI
-        if data_uri.startswith('data:'):
+        try:
+            name = att.get('name', 'unknown')
+            data_uri = att.get('url', '')
+            
+            # Validate data URI format
+            if not data_uri.startswith('data:'):
+                print(f"Warning: Invalid data URI format for {name}, skipping")
+                continue
+            
+            # Parse data URI
             parts = data_uri.split(',', 1)
-            if len(parts) == 2:
+            if len(parts) != 2:
+                print(f"Warning: Malformed data URI for {name}, skipping")
+                continue
+            
+            try:
                 content = base64.b64decode(parts[1]).decode('utf-8', errors='ignore')
-                decoded_attachments.append({"name": name, "content": content})
+                
+                # Validate content size (max 1MB)
+                if len(content) > 1024 * 1024:
+                    print(f"Warning: Attachment {name} too large (> 1MB), skipping")
+                    continue
+                
+                decoded_attachments.append({
+                    "name": name,
+                    "content": content,
+                    "size": len(content)
+                })
+                print(f"Successfully decoded attachment: {name} ({len(content)} bytes)")
+                
+            except Exception as e:
+                print(f"Error decoding attachment {name}: {e}")
+                continue
+                
+        except Exception as e:
+            print(f"Error processing attachment: {e}")
+            continue
+    
+    if decoded_attachments:
+        print(f"Successfully processed {len(decoded_attachments)} attachments")
+    
     
     # Build prompt for Gemini
     prompt = f"""You are an expert web developer. Create a complete, functional single-page web application.
